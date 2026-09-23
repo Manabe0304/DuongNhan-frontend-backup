@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  CONFIGURATION: Release
+  SOLUTION_FILE: DuongNhan.slnx
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+
+jobs:
+  build-test:
+    name: Build, Lint & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Cache dotnet tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.dotnet/tools
+          key: dotnettools-${{ runner.os }}-${{ hashFiles('**/dotnet-tools.json') }}
+          restore-keys: |
+            dotnettools-${{ runner.os }}-
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-quality: 'preview'
+
+      - name: Show SDK info
+        run: dotnet --info
+
+      - name: Trust ASP.NET Core dev certificate
+        run: |
+          dotnet dev-certs https --clean
+          dotnet dev-certs https
+          dotnet dev-certs https -ep /tmp/aspnetcore.pfx -p devpass
+          openssl pkcs12 -in /tmp/aspnetcore.pfx \
+              -clcerts -nokeys -out /tmp/aspnetcore.crt \
+              -passin pass:devpass
+          sudo cp /tmp/aspnetcore.crt \
+              /usr/local/share/ca-certificates/aspnetcore-dev.crt
+          sudo update-ca-certificates
+          dotnet dev-certs https --check
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION_FILE"
+
+      - name: Format check
+        continue-on-error: true
+        run: dotnet format "$SOLUTION_FILE" --verify-no-changes --no-restore --verbosity minimal
+
+      - name: Build
+        run: dotnet build "$SOLUTION_FILE" --configuration $CONFIGURATION --no-restore
+
+      - name: Pre-pull Docker images
+        run: |
+          docker pull postgres:17-alpine
+          docker pull dpage/pgadmin4:9.17
+
+      - name: Test
+        run: >
+          dotnet test "$SOLUTION_FILE"
+          --configuration $CONFIGURATION
+          --no-build
+          --results-directory ./TestResults
+          --report-trx
+          --report-trx-filename test-results.trx
+          --coverage
+          --coverage-output-format cobertura
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults
+          if-no-files-found: ignore
+
+      - name: Upload build output (Web)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: DuongNhan.Web/bin/${{ env.CONFIGURATION }}/net10.0/
+          if-no-files-found: ignore

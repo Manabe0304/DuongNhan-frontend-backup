@@ -1,0 +1,37 @@
+<div class="dn-card p-4 h-100 d-flex flex-column @(IsPopular ? "border-danger border-2 shadow-sm" : "")">
+    @if (IsPopular)
+    {
+        <span class="badge bg-danger align-self-start mb-2">Phổ biến nhất</span>
+    }
+    <h4>@Name</h4>
+    <p class="small text-secondary mb-3">@Description</p>
+    <div class="my-3">
+        <span class="fs-2 fw-bold text-dark">@PriceFormatted</span>
+        <small class="text-secondary"> / @BillingCycle</small>
+    </div>
+    <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4 flex-grow-1">
+        @if (Features != null)
+        {
+            @foreach (var feature in Features)
+            {
+                <li class="d-flex align-items-center gap-2">
+                    <span class="text-success">✓</span> @feature
+                </li>
+            }
+        }
+    </ul>
+    <button class="btn @(IsPopular ? "btn-dn-coral" : "btn-dn-outline") w-100 mt-auto" @onclick="OnSelect">
+        @ButtonText
+    </button>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; } = "Gói";
+    [Parameter] public string Description { get; set; } = "";
+    [Parameter] public string PriceFormatted { get; set; } = "0 đ";
+    [Parameter] public string BillingCycle { get; set; } = "tháng";
+    [Parameter] public bool IsPopular { get; set; }
+    [Parameter] public IEnumerable<string>? Features { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Chọn gói này";
+    [Parameter] public EventCallback OnSelect { get; set; }
+}

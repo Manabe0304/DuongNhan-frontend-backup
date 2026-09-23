@@ -1,0 +1,26 @@
+<div class="dn-product-card h-100 d-flex flex-column">
+    <div class="dn-product-img">
+        <img src="@(string.IsNullOrWhiteSpace(ImageUrl) ? "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600" : ImageUrl)" alt="@Name" />
+    </div>
+    <div class="p-3 d-flex flex-column flex-grow-1">
+        <small class="text-secondary">@Brand</small>
+        <h6 class="mt-1 mb-2">@Name</h6>
+        @if (!string.IsNullOrWhiteSpace(Description))
+        {
+            <p class="small text-muted line-clamp-2 mb-3">@Description</p>
+        }
+        <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+            <span class="fw-bold text-danger">@Price</span>
+            <a href="@AffiliateUrl" target="_blank" class="btn btn-dn-coral btn-sm">Xem chi tiết</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; } = "Sản phẩm chăm sóc da";
+    [Parameter] public string Brand { get; set; } = "Dermacare";
+    [Parameter] public string Price { get; set; } = "—";
+    [Parameter] public string? ImageUrl { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string AffiliateUrl { get; set; } = "#";
+}

@@ -1,0 +1,26 @@
+<form @onsubmit="OnSave" @onsubmit:preventDefault>
+    <div class="mb-3">
+        <label class="form-label small fw-semibold">Họ và tên</label>
+        <input class="form-control" type="text" @bind="DisplayName" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label small fw-semibold">Email</label>
+        <input class="form-control" type="email" value="@Email" disabled />
+        <small class="text-secondary">Email không thể thay đổi sau khi đăng ký.</small>
+    </div>
+    <div class="mb-3">
+        <label class="form-label small fw-semibold">Số điện thoại</label>
+        <input class="form-control" type="tel" @bind="PhoneNumber" placeholder="+84 90 123 4567" />
+    </div>
+    <button class="btn btn-dn-coral" disabled="@Loading">
+        @(Loading ? "Đang lưu..." : "Lưu thay đổi")
+    </button>
+</form>
+
+@code {
+    [Parameter] public string DisplayName { get; set; } = "";
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string PhoneNumber { get; set; } = "";
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+}

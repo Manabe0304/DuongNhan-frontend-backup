@@ -1,0 +1,6 @@
+{
+  "name": "DuongNhan",
+  "description": "AI-powered skin analysis and personalized skincare product recommendations",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

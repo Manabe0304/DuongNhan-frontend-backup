@@ -1,0 +1,50 @@
+@page "/plans"
+@page "/subscription/plans"
+@inject DuongNhanApiService Api
+@inject NavigationService Navigation
+
+<div class="container dn-container dn-page">
+    <div class="dn-page-heading text-center mx-auto" style="max-width: 640px;">
+        <span class="dn-kicker">Gói thành viên</span>
+        <h1>Bảng giá & Quyền lợi</h1>
+        <p>Lựa chọn gói đồng hành thích hợp để chăm sóc làn da khoa học, liên tục với AI và chuyên gia.</p>
+    </div>
+
+    <div class="row g-4 mt-2 justify-content-center">
+        <div class="col-md-4">
+            <div class="dn-card p-4 h-100 d-flex flex-column">
+                <h4>Gói Miễn Phí</h4>
+                <p class="small text-secondary">Trải nghiệm phân tích da cơ bản</p>
+                <div class="my-3">
+                    <span class="fs-2 fw-bold">0 đ</span>
+                    <small class="text-secondary"> / tháng</small>
+                </div>
+                <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4 flex-grow-1">
+                    <li>✓ 5 lượt quét AI / tháng</li>
+                    <li>✓ Phát hiện 10 tình trạng da</li>
+                    <li>✓ Gợi ý phác đồ cơ bản</li>
+                </ul>
+                <a href="/scan" class="btn btn-dn-outline w-100 mt-auto">Bắt đầu miễn phí</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dn-card p-4 h-100 d-flex flex-column border-danger border-2 shadow-sm">
+                <span class="badge bg-danger align-self-start mb-2">Được chọn nhiều nhất</span>
+                <h4>Gói Pro</h4>
+                <p class="small text-secondary">Chăm sóc toàn diện & phác đồ chuyên sâu</p>
+                <div class="my-3">
+                    <span class="fs-2 fw-bold text-danger">99.000 đ</span>
+                    <small class="text-secondary"> / tháng</small>
+                </div>
+                <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4 flex-grow-1">
+                    <li>✓ Quét AI không giới hạn</li>
+                    <li>✓ Phác đồ điều trị 5 bước chuyên sâu</li>
+                    <li>✓ Cảnh báo tương tác thành phần mỹ phẩm</li>
+                    <li>✓ Ưu tiên hỏi đáp cùng Bác sĩ da liễu</li>
+                </ul>
+                <a href="/contact" class="btn btn-dn-coral w-100 mt-auto">Nâng cấp Pro</a>
+            </div>
+        </div>
+    </div>
+</div>

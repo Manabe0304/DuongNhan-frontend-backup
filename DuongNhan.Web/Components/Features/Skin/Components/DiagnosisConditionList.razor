@@ -1,0 +1,28 @@
+<div class="dn-condition-list d-flex flex-column gap-2">
+    @if (Conditions != null && Conditions.Any())
+    {
+        @foreach (var c in Conditions)
+        {
+            <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0">@c.ConditionName</h6>
+                    <small class="text-secondary">@c.Description</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge @(c.Severity == "Severe" ? "bg-danger" : c.Severity == "Moderate" ? "bg-warning text-dark" : "bg-success")">
+                        @c.Severity
+                    </span>
+                    <div class="small fw-bold text-secondary mt-1">@(Math.Round(c.Confidence * 100))%</div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="p-3 text-center text-secondary small">Không có dữ liệu tình trạng.</div>
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<DuongNhan.Shared.Dtos.Skin.DiagnosisConditionDto>? Conditions { get; set; }
+}

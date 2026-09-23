@@ -1,0 +1,15 @@
+<span class="badge @BadgeClass px-2 py-1 rounded-pill">
+    @Math.Round(Value * 100)% Độ tin cậy
+</span>
+
+@code {
+    [Parameter] public double Value { get; set; } = 0.9;
+
+    private string BadgeClass => Value switch
+    {
+        >= 0.85 => "text-bg-success",
+        >= 0.65 => "text-bg-primary",
+        >= 0.50 => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+}

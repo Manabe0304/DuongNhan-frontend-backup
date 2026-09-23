@@ -1,0 +1,129 @@
+@page "/skin/recommendations"
+@page "/skin/recommendations/{DiagnosisId:guid}"
+@inject DuongNhanApiService Api
+@inject NavigationService Navigation
+
+<div class="container dn-container dn-page">
+    <div class="dn-page-heading">
+        <span class="dn-kicker">Personalized Regimen</span>
+        <h1>Phác đồ điều trị & Sản phẩm đề xuất</h1>
+        <p>Lộ trình chăm sóc da khoa học được tùy chỉnh theo kết quả quét AI của bạn.</p>
+    </div>
+
+    <!-- 5-Step Treatment Timeline -->
+    <div class="dn-card p-4 p-lg-5 mb-5">
+        <h3 class="mb-4">Liệu trình 5 bước hàng ngày</h3>
+        <div class="row g-4">
+            <div class="col-md">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-danger">
+                    <span class="badge bg-danger mb-2">Bước 1</span>
+                    <h6 class="fw-bold">Làm sạch</h6>
+                    <p class="small text-secondary mb-0">Sữa rửa mặt dịu nhẹ, cân bằng độ pH tự nhiên cho da.</p>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-primary">
+                    <span class="badge bg-primary mb-2">Bước 2</span>
+                    <h6 class="fw-bold">Tẩy tế bào chết</h6>
+                    <p class="small text-secondary mb-0">BHA/AHA hòa tan dầu thừa, làm sạch sâu lỗ chân lông (2-3 lần/tuần).</p>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-success">
+                    <span class="badge bg-success mb-2">Bước 3</span>
+                    <h6 class="fw-bold">Tinh chất điều trị</h6>
+                    <p class="small text-secondary mb-0">Serum Niacinamide hoặc Vitamin C giảm thâm, kiềm dầu.</p>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-info">
+                    <span class="badge bg-info mb-2">Bước 4</span>
+                    <h6 class="fw-bold">Dưỡng ẩm</h6>
+                    <p class="small text-secondary mb-0">Kem dưỡng ẩm khóa nước với Ceramide và Hyaluronic Acid.</p>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-warning">
+                    <span class="badge bg-warning text-dark mb-2">Bước 5</span>
+                    <h6 class="fw-bold">Chống nắng</h6>
+                    <p class="small text-secondary mb-0">Kem chống nắng phổ rộng SPF 50+ bảo vệ tế bào ban ngày.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Products Grid -->
+    <h3 class="mb-3">Sản phẩm khuyên dùng theo phác đồ</h3>
+    @if (loading)
+    {
+        <div class="dn-card p-5 text-center">
+            <div class="spinner-border text-danger"></div>
+            <p class="small text-secondary mt-3">Đang đối chiếu sản phẩm phù hợp...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var p in products)
+            {
+                <div class="col-sm-6 col-xl-3">
+                    <div class="dn-product-card h-100 d-flex flex-column">
+                        <div class="dn-product-img">
+                            <img src="@Text(p, "imageUrl", "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600")" alt="" />
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <small class="text-secondary">@Text(p, "brand", "Dermacare")</small>
+                            <h6 class="mt-1 mb-2">@Text(p, "name", "Chăm sóc da")</h6>
+                            <p class="small text-muted line-clamp-2 mb-3">@Text(p, "description", "")</p>
+                            <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                                <span class="fw-bold text-danger">@Text(p, "price", "350.000 đ")</span>
+                                <a href="@Affiliate(p)" class="btn btn-dn-coral btn-sm">Mua ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid? DiagnosisId { get; set; }
+    private List<System.Text.Json.JsonElement> products = [];
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        try
+        {
+            if (DiagnosisId.HasValue && DiagnosisId.Value != Guid.Empty)
+            {
+                products = await Api.GetRecommendationsAsync(DiagnosisId.Value);
+            }
+            if (products.Count == 0)
+            {
+                products = await Api.GetProductsAsync();
+            }
+        }
+        catch
+        {
+            try { products = await Api.GetProductsAsync(); } catch { }
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private static string Text(System.Text.Json.JsonElement item, string name, string fallback)
+    {
+        foreach (var key in new[] { name, char.ToUpperInvariant(name[0]) + name[1..] })
+            if (item.TryGetProperty(key, out var p))
+                return p.ValueKind == System.Text.Json.JsonValueKind.String ? p.GetString() ?? fallback : p.ToString();
+        return fallback;
+    }
+
+    private static string Affiliate(System.Text.Json.JsonElement item)
+        => Text(item, "affiliateUrl", "#");
+}

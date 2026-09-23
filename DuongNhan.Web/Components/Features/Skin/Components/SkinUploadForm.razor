@@ -1,0 +1,11 @@
+<div class="dn-skin-upload-form">
+    <div class="dn-dropzone p-4 text-center border-2 border-dashed rounded-3">
+        <h5>Chọn hoặc kéo thả ảnh vào đây</h5>
+        <p class="small text-secondary">Hỗ trợ JPG, PNG, WEBP (tối đa 10MB)</p>
+        <InputFile OnChange="OnFileSelected" accept="image/*" class="form-control mt-3" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback<InputFileChangeEventArgs> OnFileSelected { get; set; }
+}

@@ -1,0 +1,15 @@
+<div class="dn-onboarding-step d-flex gap-3 p-3 bg-light rounded-3">
+    <div class="step-num badge bg-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; min-width: 32px;">
+        @StepNumber
+    </div>
+    <div>
+        <h6 class="mb-1 text-dark">@Title</h6>
+        <p class="small text-secondary mb-0">@Description</p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int StepNumber { get; set; } = 1;
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Description { get; set; } = "";
+}

@@ -1,0 +1,32 @@
+<div class="dn-card p-4 h-100">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <span class="badge @BadgeClass">@Severity</span>
+        <span class="small fw-bold text-secondary">@(Math.Round(Confidence * 100))% Tin cậy</span>
+    </div>
+    <h5 class="mb-2">@ConditionName</h5>
+    <p class="small text-secondary mb-3">@Description</p>
+    <div class="progress" style="height: 6px;">
+        <div class="progress-bar @ProgressClass" role="progressbar" style="width: @(Math.Round(Confidence * 100))%"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string ConditionName { get; set; } = "Tình trạng da";
+    [Parameter] public string Severity { get; set; } = "Mild";
+    [Parameter] public double Confidence { get; set; } = 0.85;
+    [Parameter] public string Description { get; set; } = "";
+
+    private string BadgeClass => Severity.ToLower() switch
+    {
+        "severe" => "bg-danger",
+        "moderate" => "bg-warning text-dark",
+        _ => "bg-success"
+    };
+
+    private string ProgressClass => Severity.ToLower() switch
+    {
+        "severe" => "bg-danger",
+        "moderate" => "bg-warning",
+        _ => "bg-success"
+    };
+}

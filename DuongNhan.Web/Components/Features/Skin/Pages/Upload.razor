@@ -1,0 +1,190 @@
+@page "/scan"
+@page "/upload"
+@inject DuongNhanApiService Api
+@inject ImageValidationService ImageValidation
+@inject NavigationService Navigation
+
+<div class="container dn-container dn-page">
+    <div class="dn-page-heading">
+        <span class="dn-kicker">AI Skin Analysis</span>
+        <h1>Phân tích làn da</h1>
+        <p>Upload ảnh hoặc chụp trực tiếp bằng máy ảnh để AI nhận diện tình trạng da và xây dựng phác đồ điều trị.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="dn-card p-4 p-lg-5">
+                <!-- Mode Switcher -->
+                <div class="d-flex p-1 bg-light rounded-3 mb-4 gap-1">
+                    <button type="button" class="btn btn-sm flex-fill @(mode == "upload" ? "btn-white shadow-sm fw-semibold" : "text-secondary")" @onclick='() => SetMode("upload")'>
+                        📁 Tải ảnh từ thiết bị
+                    </button>
+                    <button type="button" class="btn btn-sm flex-fill @(mode == "camera" ? "btn-white shadow-sm fw-semibold" : "text-secondary")" @onclick='() => SetMode("camera")'>
+                        📷 Chụp bằng Camera
+                    </button>
+                </div>
+
+                @if (mode == "upload")
+                {
+                    <div class="dn-dropzone @(file is null ? "" : "has-file")">
+                        <div class="dn-upload-icon">↑</div>
+                        <h5>@(file is null ? "Chọn ảnh da để bắt đầu" : file.Name)</h5>
+                        <p class="small text-secondary">JPEG, PNG hoặc WebP • tối đa 10 MB</p>
+                        <InputFile OnChange="OnFileSelected" accept="image/jpeg,image/png,image/webp" class="form-control mt-3" />
+                    </div>
+
+                    <div class="dn-check-list mt-4">
+                        <div>✓ Ảnh chính diện, đủ sáng</div>
+                        <div>✓ Không dùng filter hoặc beauty mode</div>
+                        <div>✓ Khuôn mặt chiếm phần lớn khung hình</div>
+                    </div>
+
+                    <button class="btn btn-dn-coral btn-lg w-100 mt-4" @onclick="AnalyzeFile" disabled="@(file is null || loading)">
+                        @(loading ? "Đang phân tích..." : "Phân tích bằng AI")
+                    </button>
+                }
+                else
+                {
+                    <DuongNhan.Web.Components.Features.Skin.Components.CameraCapture OnPhotoCaptured="OnCameraCaptured" />
+
+                    @if (!string.IsNullOrWhiteSpace(cameraBase64))
+                    {
+                        <div class="mt-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                            <span class="small fw-medium text-success">✓ Đã chụp ảnh thành công</span>
+                            <button class="btn btn-dn-coral" @onclick="AnalyzeCamera" disabled="@loading">
+                                @(loading ? "Đang phân tích..." : "Phân tích bằng AI ngay")
+                            </button>
+                        </div>
+                    }
+                }
+
+                @if (!string.IsNullOrWhiteSpace(message))
+                {
+                    <div class="alert @(success ? "alert-success" : "alert-danger") small mt-3">@message</div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="dn-card p-4 h-100">
+                <span class="dn-kicker">Quy trình AI</span>
+                <h5 class="mt-2">3 bước nhận phác đồ điều trị</h5>
+                <div class="d-flex flex-column gap-3 mt-3">
+                    <div class="d-flex gap-3">
+                        <span class="badge bg-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">1</span>
+                        <div>
+                            <strong class="d-block small">Chụp hoặc tải ảnh da</strong>
+                            <span class="text-secondary small">Ảnh rõ nét, không trang điểm đậm để AI nhìn rõ cấu trúc da.</span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <span class="badge bg-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">2</span>
+                        <div>
+                            <strong class="d-block small">AI Deep Learning phân tích</strong>
+                            <span class="text-secondary small">Quét các chỉ số: mụn, lỗ chân lông, sắc tố, độ ẩm và lão hóa.</span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <span class="badge bg-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">3</span>
+                        <div>
+                            <strong class="d-block small">Nhận phác đồ 5 bước</strong>
+                            <span class="text-secondary small">Liệu trình chăm sóc cá nhân hóa kèm gợi ý sản phẩm phù hợp.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dn-mini-banner mt-4">
+                    <strong>Muốn được tư vấn chuyên sâu?</strong><br/>
+                    <a href="/doctors">Kết nối bác sĩ da liễu →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string mode = "upload";
+    private IBrowserFile? file;
+    private string? cameraBase64;
+    private bool loading;
+    private bool success;
+    private string? message;
+
+    private void SetMode(string newMode)
+    {
+        mode = newMode;
+        message = null;
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        message = null;
+        await Task.CompletedTask;
+    }
+
+    private void OnCameraCaptured(string base64)
+    {
+        cameraBase64 = base64;
+        message = null;
+    }
+
+    private async Task AnalyzeFile()
+    {
+        if (file is null) return;
+        loading = true; message = null;
+        try
+        {
+            await using var stream = file.OpenReadStream(AppConstants.MaxUploadBytes);
+            var validation = await ImageValidation.ValidateAsync(stream, file.Name, file.ContentType);
+            if (!validation.IsValid) { message = validation.Message; return; }
+
+            var uploaded = await Api.UploadAsync(file);
+            var id = uploaded.GetGuid("id", "skinImageId", "imageId", "uploadId");
+            if (id is null)
+            {
+                message = "Upload thành công nhưng API chưa trả về ID ảnh để chẩn đoán.";
+                return;
+            }
+
+            var diagnosis = await Api.DiagnoseAsync(id.Value);
+            Navigation.NavigateTo($"/diagnosis/{id.Value}");
+        }
+        catch (Exception ex)
+        {
+            message = $"Không thể phân tích ảnh: {ex.Message}";
+        }
+        finally { loading = false; }
+    }
+
+    private async Task AnalyzeCamera()
+    {
+        if (string.IsNullOrWhiteSpace(cameraBase64)) return;
+        loading = true; message = null;
+        try
+        {
+            var raw = cameraBase64;
+            if (raw.Contains(","))
+            {
+                raw = raw.Substring(raw.IndexOf(",") + 1);
+            }
+            var bytes = Convert.FromBase64String(raw);
+
+            var uploaded = await Api.UploadBytesAsync(bytes, "camera-scan.jpg", "image/jpeg");
+            var id = uploaded.GetGuid("id", "skinImageId", "imageId", "uploadId");
+            if (id is null)
+            {
+                message = "Upload ảnh từ camera thành công nhưng không lấy được ID phân tích.";
+                return;
+            }
+
+            var diagnosis = await Api.DiagnoseAsync(id.Value);
+            Navigation.NavigateTo($"/diagnosis/{id.Value}");
+        }
+        catch (Exception ex)
+        {
+            message = $"Không thể phân tích ảnh camera: {ex.Message}";
+        }
+        finally { loading = false; }
+    }
+}

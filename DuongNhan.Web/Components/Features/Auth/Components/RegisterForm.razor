@@ -1,0 +1,25 @@
+<form @onsubmit="OnSubmit" @onsubmit:preventDefault>
+    <div class="mb-3">
+        <label class="form-label">Họ và tên</label>
+        <input class="form-control" type="text" @bind="Name" required placeholder="Nguyễn Văn A" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" @bind="Email" required placeholder="name@example.com" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Mật khẩu</label>
+        <input class="form-control" type="password" @bind="Password" required placeholder="••••••••" />
+    </div>
+    <button class="btn btn-dn-coral w-100" disabled="@Loading">
+        @(Loading ? "Đang xử lý..." : "Đăng ký tài khoản")
+    </button>
+</form>
+
+@code {
+    [Parameter] public string Name { get; set; } = "";
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string Password { get; set; } = "";
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public EventCallback OnSubmit { get; set; }
+}

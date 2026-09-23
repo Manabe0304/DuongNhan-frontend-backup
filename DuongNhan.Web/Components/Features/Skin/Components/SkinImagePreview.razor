@@ -1,0 +1,14 @@
+<div class="dn-image-preview position-relative rounded-3 overflow-hidden">
+    <img src="@ImageUrl" alt="Skin analysis preview" class="w-100 rounded-3 shadow-sm" style="max-height: 420px; object-fit: cover;" />
+    @if (!string.IsNullOrWhiteSpace(Caption))
+    {
+        <div class="position-absolute bottom-0 start-0 end-0 p-2 bg-dark bg-opacity-50 text-white small text-center">
+            @Caption
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string ImageUrl { get; set; } = "";
+    [Parameter] public string? Caption { get; set; }
+}

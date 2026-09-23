@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DuongNhan.ServiceDefaults\DuongNhan.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\DuongNhan.Shared\DuongNhan.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Refit" />
+    <PackageReference Include="Refit.HttpClientFactory" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\Features\Auth\Components\" />
+    <Folder Include="Components\Features\Auth\Pages\" />
+    <Folder Include="Components\Features\Home\Pages\" />
+    <Folder Include="Components\Features\Skin\Pages\" />
+  </ItemGroup>
+
+</Project>

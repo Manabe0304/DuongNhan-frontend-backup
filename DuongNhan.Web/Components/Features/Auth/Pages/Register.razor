@@ -1,0 +1,118 @@
+@page "/register"
+@page "/auth/register"
+@inject DuongNhanApiService Api
+@inject UiSessionService Session
+@inject NavigationService Navigation
+
+<div class="dn-auth-page">
+    <div class="dn-auth-brand d-none d-lg-flex">
+        <div class="dn-auth-brand-inner">
+            <a href="/" class="dn-brand dn-brand-light"><span class="dn-brand-mark">✚</span>Dưỡng Nhan</a>
+            <div class="mt-auto">
+                <h2>Làn da khoẻ mạnh bắt đầu từ dữ liệu chính xác.</h2>
+                <div class="d-flex align-items-center gap-3 mt-4">
+                    <div class="dn-score-ring-sm"><b>92</b><small>Skin Score</small></div>
+                    <p class="small text-secondary mb-0">Theo dõi điểm số da sau mỗi lần phân tích và thấy rõ tiến bộ theo thời gian.</p>
+                </div>
+            </div>
+            <small class="text-secondary">© 2026 Dưỡng Nhan AI Platform</small>
+        </div>
+    </div>
+
+    <div class="dn-auth-form-wrap">
+        <div class="dn-auth-form">
+            <a href="/" class="small text-secondary text-decoration-none">← Về trang chủ</a>
+            <span class="dn-kicker mt-4">Tài khoản</span>
+            <h1>Tạo tài khoản mới</h1>
+            <p class="text-secondary small">Bắt đầu hành trình chăm sóc da khoa học với AI và chuyên gia.</p>
+
+            @if (!string.IsNullOrWhiteSpace(error))
+            {
+                <div class="alert alert-danger small">@error</div>
+            }
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-secondary btn-lg w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm" @onclick="GoogleRegister" disabled="@loading">
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+                        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                        <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707 0-.59.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z"/>
+                        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+                    </svg>
+                    <span class="fw-medium">Đăng ký nhanh bằng Google</span>
+                </button>
+            </div>
+
+            <div class="d-flex align-items-center my-3 text-muted">
+                <hr class="flex-grow-1 my-0" />
+                <span class="px-2 small text-secondary">HOẶC NHẬP THÔNG TIN</span>
+                <hr class="flex-grow-1 my-0" />
+            </div>
+
+            <form @onsubmit="Submit" @onsubmit:preventDefault>
+                <div class="mb-3"><label>Họ và tên</label><input class="form-control form-control-lg" type="text" @bind="name" required placeholder="Nguyễn Văn A" /></div>
+                <div class="mb-3"><label>Email</label><input class="form-control form-control-lg" type="email" @bind="email" required placeholder="name@example.com" /></div>
+                <div class="mb-3"><label>Mật khẩu</label><input class="form-control form-control-lg" type="password" @bind="password" required placeholder="••••••••" /></div>
+                <div class="d-flex justify-content-between small mb-4"><label class="d-flex gap-2 align-items-center"><input type="checkbox" @bind="remember" /> Ghi nhớ đăng nhập</label><a href="/forgot-password" class="text-secondary">Quên mật khẩu?</a></div>
+                <button class="btn btn-dn-coral btn-lg w-100" disabled="@loading">@((loading) ? "Đang xử lý..." : "Đăng ký tài khoản")</button>
+            </form>
+
+            <div class="text-center small text-secondary mt-4">Đã có tài khoản? <a href="/login" class="fw-semibold text-dark">Đăng nhập</a></div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string name = "";
+    private string email = "";
+    private string password = "";
+    private bool remember = true;
+    private bool loading;
+    private string? error;
+
+    private async Task Submit()
+    {
+        error = null;
+        loading = true;
+        try
+        {
+            var result = await Api.RegisterAsync(name.Trim(), email.Trim(), password);
+            if (string.IsNullOrWhiteSpace(result.AccessToken))
+            {
+                error = "API không trả về access token. Hãy kiểm tra Auth API.";
+                return;
+            }
+
+            await Session.SignInAsync(result.UserName ?? email.Split('@')[0], result.Email ?? email, result.AccessToken, result.RefreshToken);
+            Navigation.NavigateTo("/dashboard");
+        }
+        catch (Exception ex)
+        {
+            error = $"Đăng nhập thất bại: {ex.Message}";
+        }
+        finally { loading = false; }
+    }
+
+    private async Task GoogleRegister()
+    {
+        error = null;
+        loading = true;
+        try
+        {
+            var result = await Api.GoogleLoginAsync("google-token-" + Guid.NewGuid().ToString("N"));
+            if (string.IsNullOrWhiteSpace(result.AccessToken))
+            {
+                error = "Đăng nhập Google không nhận được access token.";
+                return;
+            }
+
+            await Session.SignInAsync(result.UserName ?? "Google User", result.Email ?? "user@gmail.com", result.AccessToken, result.RefreshToken);
+            Navigation.NavigateTo("/dashboard");
+        }
+        catch (Exception ex)
+        {
+            error = $"Đăng ký Google thất bại: {ex.Message}";
+        }
+        finally { loading = false; }
+    }
+}

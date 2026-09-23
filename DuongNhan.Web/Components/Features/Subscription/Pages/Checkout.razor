@@ -1,0 +1,27 @@
+@page "/checkout"
+@page "/subscription/checkout"
+@inject NavigationService Navigation
+
+<div class="container dn-container dn-page py-5">
+    <div class="dn-card p-5 mx-auto" style="max-width: 520px;">
+        <h3>Xác nhận thanh toán</h3>
+        <p class="small text-secondary mb-4">Gói Tiêu Chuẩn (Pro) • 99.000 đ / tháng</p>
+        <div class="p-3 bg-light rounded-3 mb-4">
+            <div class="d-flex justify-content-between mb-2">
+                <span>Gói dịch vụ</span>
+                <strong>Dưỡng Nhan Pro</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Thời hạn</span>
+                <span>1 tháng (gia hạn tự động)</span>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between fs-5 fw-bold text-danger">
+                <span>Tổng tiền</span>
+                <span>99.000 đ</span>
+            </div>
+        </div>
+        <a href="/checkout-success" class="btn btn-dn-coral w-100 mb-2">Hoàn tất thanh toán</a>
+        <a href="/pricing" class="btn btn-outline-secondary w-100">Hủy</a>
+    </div>
+</div>

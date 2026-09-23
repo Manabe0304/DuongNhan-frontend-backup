@@ -1,0 +1,27 @@
+@page "/profile/delete-account"
+@inject NavigationService Navigation
+
+<div class="container dn-container dn-page">
+    <div class="dn-page-heading">
+        <span class="dn-kicker text-danger">Nguy hiểm</span>
+        <h1>Xóa tài khoản</h1>
+        <p>Hành động này sẽ xóa vĩnh viễn tài khoản và toàn bộ lịch sử quét da của bạn.</p>
+    </div>
+
+    <div class="dn-card p-4 p-lg-5" style="max-width: 520px;">
+        <p class="text-secondary small">
+            Khi bấm nút xác nhận bên dưới, toàn bộ dữ liệu hồ sơ, kết quả chẩn đoán AI và lịch sử đăng nhập sẽ bị hủy hoàn toàn và không thể khôi phục lại.
+        </p>
+
+        <button class="btn btn-danger w-100" @onclick="ConfirmDelete">
+            Xác nhận xóa tài khoản vĩnh viễn
+        </button>
+    </div>
+</div>
+
+@code {
+    private void ConfirmDelete()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

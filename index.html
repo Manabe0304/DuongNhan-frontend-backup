@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DuongNhan — AI Skin Analysis & Care</title>
+    <meta name="description" content="AI-powered skin analysis and personalized skincare product recommendations" />
+    <meta property="og:title" content="DuongNhan — AI Skin Analysis & Care" />
+    <meta property="og:description" content="AI-powered skin analysis and personalized skincare product recommendations" />
+    <script>
+      (function() {
+        try {
+          var rawFetch = window.fetch;
+          var activeFetch = typeof rawFetch === 'function' ? rawFetch.bind(window) : rawFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return activeFetch;
+            },
+            set: function(fn) {
+              activeFetch = fn;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          try {
+            var proto = Object.getPrototypeOf(window);
+            if (proto) {
+              var pFetch = proto.fetch;
+              var actFetch = typeof pFetch === 'function' ? pFetch.bind(window) : pFetch;
+              Object.defineProperty(proto, 'fetch', {
+                get: function() { return actFetch; },
+                set: function(fn) { actFetch = fn; },
+                configurable: true,
+                enumerable: true
+              });
+            }
+          } catch (e2) {}
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased font-sans">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

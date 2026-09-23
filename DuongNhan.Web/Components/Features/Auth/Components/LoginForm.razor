@@ -1,0 +1,27 @@
+<form @onsubmit="OnSubmit" @onsubmit:preventDefault>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" @bind="Email" required placeholder="name@example.com" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Mật khẩu</label>
+        <input class="form-control" type="password" @bind="Password" required placeholder="••••••••" />
+    </div>
+    <div class="d-flex justify-content-between small mb-3">
+        <label class="d-flex align-items-center gap-2">
+            <input type="checkbox" @bind="RememberMe" /> Ghi nhớ
+        </label>
+        <a href="/forgot-password" class="text-secondary text-decoration-none">Quên mật khẩu?</a>
+    </div>
+    <button class="btn btn-dn-coral w-100" disabled="@Loading">
+        @(Loading ? "Đang xử lý..." : "Đăng nhập")
+    </button>
+</form>
+
+@code {
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string Password { get; set; } = "";
+    [Parameter] public bool RememberMe { get; set; } = true;
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public EventCallback OnSubmit { get; set; }
+}

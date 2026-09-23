@@ -1,0 +1,12 @@
+<div class="dn-recommendation-reason p-3 bg-light rounded-3">
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge bg-danger rounded-pill">Lý do gợi ý</span>
+        <strong class="small text-dark">@ConditionName</strong>
+    </div>
+    <p class="small text-secondary mb-0">@Reason</p>
+</div>
+
+@code {
+    [Parameter] public string ConditionName { get; set; } = "";
+    [Parameter] public string Reason { get; set; } = "";
+}

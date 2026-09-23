@@ -1,0 +1,27 @@
+<div class="row g-4">
+    @if (Products != null && Products.Any())
+    {
+        @foreach (var product in Products)
+        {
+            <div class="col-sm-6 col-xl-3">
+                <ProductCard 
+                    Name="@product.Name" 
+                    Brand="@product.Brand" 
+                    Price="@product.Price.ToString("N0") + \" đ\"" 
+                    ImageUrl="@product.ImageUrl" 
+                    Description="@product.Description" 
+                    AffiliateUrl="@product.AffiliateUrl" />
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-4 text-secondary">
+            Không có sản phẩm nào phù hợp.
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<DuongNhan.Shared.Dtos.Products.ProductDto>? Products { get; set; }
+}

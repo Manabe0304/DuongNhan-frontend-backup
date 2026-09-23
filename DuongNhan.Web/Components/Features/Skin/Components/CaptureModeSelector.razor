@@ -1,0 +1,13 @@
+<div class="dn-capture-mode-selector btn-group w-100 mb-3" role="group">
+    <button type="button" class="btn @(CurrentMode == "upload" ? "btn-danger" : "btn-outline-secondary")" @onclick='() => OnModeChanged.InvokeAsync("upload")'>
+        📁 Tải tệp lên
+    </button>
+    <button type="button" class="btn @(CurrentMode == "camera" ? "btn-danger" : "btn-outline-secondary")" @onclick='() => OnModeChanged.InvokeAsync("camera")'>
+        📷 Chụp ảnh
+    </button>
+</div>
+
+@code {
+    [Parameter] public string CurrentMode { get; set; } = "upload";
+    [Parameter] public EventCallback<string> OnModeChanged { get; set; }
+}

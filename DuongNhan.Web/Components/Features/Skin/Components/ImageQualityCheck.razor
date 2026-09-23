@@ -1,0 +1,20 @@
+<div class="dn-quality-check p-3 bg-light rounded-3">
+    <h6 class="small fw-bold mb-2">Đánh giá chất lượng ảnh:</h6>
+    <div class="d-flex flex-column gap-1 small">
+        <div class="d-flex align-items-center gap-2">
+            <span class="@(IsBrightEnough ? "text-success" : "text-warning")">●</span> Độ sáng: @(IsBrightEnough ? "Đạt chuẩn" : "Hơi tối")
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="@(IsSharp ? "text-success" : "text-warning")">●</span> Độ nét: @(IsSharp ? "Rõ chi tiết" : "Cần chụp gần hơn")
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="@(IsFaceCentered ? "text-success" : "text-warning")">●</span> Vị trí: @(IsFaceCentered ? "Chính diện" : "Chưa cân đối")
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsBrightEnough { get; set; } = true;
+    [Parameter] public bool IsSharp { get; set; } = true;
+    [Parameter] public bool IsFaceCentered { get; set; } = true;
+}

@@ -1,0 +1,134 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<div class="dn-camera-capture">
+    <div class="dn-camera-container position-relative overflow-hidden rounded-3 bg-dark text-white text-center">
+        @if (!cameraActive && string.IsNullOrWhiteSpace(capturedImage))
+        {
+            <div class="p-5 d-flex flex-column align-items-center justify-content-center min-vh-25">
+                <div class="dn-upload-icon mb-3">📷</div>
+                <h6>Chụp ảnh trực tiếp với Camera</h6>
+                <p class="small text-secondary mb-3">Cho phép truy cập máy ảnh để chụp khuôn mặt ở cự ly gần</p>
+                <button type="button" class="btn btn-dn-coral" @onclick="StartCamera" disabled="@loading">
+                    @(loading ? "Đang mở camera..." : "Bật máy ảnh")
+                </button>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(capturedImage))
+        {
+            <div class="position-relative">
+                <img src="@capturedImage" alt="Captured frame" class="img-fluid w-100 rounded-3" style="max-height: 420px; object-fit: cover;" />
+                <div class="position-absolute bottom-0 start-0 end-0 p-3 d-flex justify-content-center gap-2 bg-dark bg-opacity-75">
+                    <button type="button" class="btn btn-outline-light btn-sm" @onclick="Retake">Chụp lại</button>
+                    <button type="button" class="btn btn-dn-coral btn-sm" @onclick="Confirm">Dùng ảnh này</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="position-relative">
+                <video @ref="videoElement" autoplay playsinline class="w-100 rounded-3" style="max-height: 420px; object-fit: cover; transform: scaleX(-1);"></video>
+                <!-- Face guide overlay -->
+                <div class="position-absolute top-50 start-50 translate-middle pointer-events-none" style="width: 220px; height: 290px; border: 2px dashed rgba(255,255,255,0.7); border-radius: 50%;">
+                    <span class="position-absolute top-0 start-50 translate-middle-x badge bg-dark bg-opacity-75 small">Đặt khuôn mặt vào đây</span>
+                </div>
+                <div class="position-absolute bottom-0 start-0 end-0 p-3 d-flex justify-content-center gap-3 bg-dark bg-opacity-50">
+                    <button type="button" class="btn btn-dn-coral btn-lg rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 58px; height: 58px;" @onclick="CapturePhoto" title="Chụp ảnh">
+                        <span style="font-size: 20px;">📸</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-sm align-self-center" @onclick="StopCamera">Đóng camera</button>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(error))
+    {
+        <div class="alert alert-warning small mt-2">@error</div>
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnPhotoCaptured { get; set; }
+
+    private ElementReference videoElement;
+    private IJSObjectReference? cameraModule;
+    private bool cameraActive;
+    private bool loading;
+    private string? capturedImage;
+    private string? error;
+
+    private async Task StartCamera()
+    {
+        loading = true;
+        error = null;
+        try
+        {
+            cameraModule ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/camera.js");
+            cameraActive = true;
+            await InvokeAsync(StateHasChanged);
+            // Give DOM time to mount the video element
+            await Task.Delay(100);
+            await cameraModule.InvokeVoidAsync("startCamera", videoElement);
+        }
+        catch (Exception ex)
+        {
+            error = "Không thể khởi động camera. Vui lòng cấp quyền truy cập camera trong trình duyệt.";
+            cameraActive = false;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task CapturePhoto()
+    {
+        if (cameraModule is null) return;
+        try
+        {
+            capturedImage = await cameraModule.InvokeAsync<string>("captureFrame", videoElement);
+            await StopCamera();
+        }
+        catch (Exception ex)
+        {
+            error = $"Lỗi chụp ảnh: {ex.Message}";
+        }
+    }
+
+    private void Retake()
+    {
+        capturedImage = null;
+        _ = StartCamera();
+    }
+
+    private async Task Confirm()
+    {
+        if (!string.IsNullOrWhiteSpace(capturedImage))
+        {
+            await OnPhotoCaptured.InvokeAsync(capturedImage);
+        }
+    }
+
+    private async Task StopCamera()
+    {
+        if (cameraModule is not null && cameraActive)
+        {
+            try
+            {
+                await cameraModule.InvokeVoidAsync("stopCamera", videoElement);
+            }
+            catch { }
+            cameraActive = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopCamera();
+        if (cameraModule is not null)
+        {
+            try { await cameraModule.DisposeAsync(); } catch { }
+        }
+    }
+}
