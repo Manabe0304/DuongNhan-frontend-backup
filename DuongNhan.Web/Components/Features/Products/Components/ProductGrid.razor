@@ -7,10 +7,9 @@
                 <ProductCard 
                     Name="@product.Name" 
                     Brand="@product.Brand" 
-                    Price="@product.Price.ToString("N0") + \" đ\"" 
+                    Price="@(product.Price.ToString("N0") + " đ")"
                     ImageUrl="@product.ImageUrl" 
-                    Description="@product.Description" 
-                    AffiliateUrl="@product.AffiliateUrl" />
+                    Description="@product.Description" />
             </div>
         }
     }

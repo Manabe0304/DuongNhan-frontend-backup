@@ -137,8 +137,9 @@ public sealed class DuongNhanApiService(
 
 public sealed record ApiResult(JsonElement Data)
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     public static ApiResult From<T>(T data)
-        => new(JsonSerializer.SerializeToElement(data, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        => new(JsonSerializer.SerializeToElement(data, JsonOptions));
 
     public string? AccessToken => GetString("accessToken", "AccessToken", "token");
     public string? RefreshToken => GetString("refreshToken", "RefreshToken");

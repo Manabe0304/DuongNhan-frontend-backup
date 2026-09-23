@@ -137,21 +137,23 @@
         {
             await using var stream = file.OpenReadStream(AppConstants.MaxUploadBytes);
             var validation = await ImageValidation.ValidateAsync(stream, file.Name, file.ContentType);
-            if (!validation.IsValid) { message = validation.Message; return; }
+            if (!validation.IsValid) { success = false; message = validation.Message; return; }
 
             var uploaded = await Api.UploadAsync(file);
             var id = uploaded.GetGuid("id", "skinImageId", "imageId", "uploadId");
             if (id is null)
             {
+                success = false;
                 message = "Upload thành công nhưng API chưa trả về ID ảnh để chẩn đoán.";
                 return;
             }
-
+            success = true;
             var diagnosis = await Api.DiagnoseAsync(id.Value);
             Navigation.NavigateTo($"/diagnosis/{id.Value}");
         }
         catch (Exception ex)
         {
+            success = false;
             message = $"Không thể phân tích ảnh: {ex.Message}";
         }
         finally { loading = false; }
@@ -174,15 +176,17 @@
             var id = uploaded.GetGuid("id", "skinImageId", "imageId", "uploadId");
             if (id is null)
             {
+                success = false;
                 message = "Upload ảnh từ camera thành công nhưng không lấy được ID phân tích.";
                 return;
             }
-
+            success = true;
             var diagnosis = await Api.DiagnoseAsync(id.Value);
             Navigation.NavigateTo($"/diagnosis/{id.Value}");
         }
         catch (Exception ex)
         {
+            success = false;
             message = $"Không thể phân tích ảnh camera: {ex.Message}";
         }
         finally { loading = false; }

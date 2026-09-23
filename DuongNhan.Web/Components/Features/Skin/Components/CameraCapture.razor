@@ -71,7 +71,7 @@
             await Task.Delay(100);
             await cameraModule.InvokeVoidAsync("startCamera", videoElement);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             error = "Không thể khởi động camera. Vui lòng cấp quyền truy cập camera trong trình duyệt.";
             cameraActive = false;
