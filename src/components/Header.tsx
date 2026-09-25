@@ -56,6 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
             AI Scan Da
           </button>
 
+          {/* Dermatologist page temporarily commented out per request
           <button
             onClick={() => onSelectTab('doctors')}
             className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
@@ -66,6 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Bác sĩ
           </button>
+          */}
 
           <button
             onClick={() => onSelectTab('products')}
@@ -92,16 +94,19 @@ export const Header: React.FC<HeaderProps> = ({
             Bảng giá
           </button>
 
-          <button
-            onClick={() => onSelectTab('history')}
-            className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              currentTab === 'history'
-                ? 'text-slate-900 font-bold bg-[#f4f3ef]'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-[#f4f3ef]/60'
-            }`}
-          >
-            Lịch sử
-          </button>
+          {/* Skin scan history section hidden for logged-out state per request */}
+          {user && !user.isGuest && user.email !== 'guest@duongnhan.ai' && (
+            <button
+              onClick={() => onSelectTab('history')}
+              className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                currentTab === 'history'
+                  ? 'text-slate-900 font-bold bg-[#f4f3ef]'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#f4f3ef]/60'
+              }`}
+            >
+              Lịch sử
+            </button>
+          )}
         </nav>
 
         {/* Auth / Profile Actions matching DuongNhan.Web buttons */}
@@ -164,6 +169,7 @@ export const Header: React.FC<HeaderProps> = ({
           <Sparkles className="w-4 h-4" />
           <span>AI Scan</span>
         </button>
+        {/* Doctors mobile tab temporarily commented out per request
         <button
           onClick={() => onSelectTab('doctors')}
           className={`flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-lg shrink-0 ${currentTab === 'doctors' ? 'text-[#238b83] font-bold' : 'text-slate-600'}`}
@@ -171,6 +177,7 @@ export const Header: React.FC<HeaderProps> = ({
           <Stethoscope className="w-4 h-4" />
           <span>Bác sĩ</span>
         </button>
+        */}
         <button
           onClick={() => onSelectTab('products')}
           className={`flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-lg shrink-0 ${currentTab === 'products' ? 'text-[#ee4d2d] font-bold' : 'text-slate-600'}`}

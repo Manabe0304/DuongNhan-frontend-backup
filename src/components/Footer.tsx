@@ -89,6 +89,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   AI Scan Da
                 </button>
               </li>
+              {/* Doctors temporarily commented out per request
               <li>
                 <button
                   onClick={() => onSelectTab && onSelectTab('doctors')}
@@ -97,6 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   Bác sĩ chuyên khoa
                 </button>
               </li>
+              */}
               <li>
                 <button
                   onClick={() => onSelectTab && onSelectTab('products')}

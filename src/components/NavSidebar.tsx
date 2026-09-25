@@ -38,7 +38,7 @@ export const NavSidebar: React.FC<NavSidebarProps> = ({
   const menuItems = [
     { id: 'home', label: 'Trang chủ', icon: Home },
     { id: 'upload', label: 'AI Scan Da', icon: Sparkles, highlight: true },
-    { id: 'doctors', label: 'Bác sĩ da liễu', icon: Stethoscope },
+    // { id: 'doctors', label: 'Bác sĩ da liễu', icon: Stethoscope }, /* Temporarily commented out per request */
     { id: 'products', label: 'Sản phẩm & Shopee', icon: ShoppingBag, badge: 'Mall' },
     { id: 'recommendations', label: 'Phác đồ điều trị', icon: ClipboardList },
     { id: 'history', label: 'Lịch sử phân tích', icon: History },

@@ -96,7 +96,7 @@ export function App() {
       case 'upload': return 'AI Scan Da';
       case 'diagnosis': return 'Kết quả phân tích da';
       case 'recommendations': return 'Phác đồ điều trị';
-      case 'doctors': return 'Bác sĩ da liễu';
+      // case 'doctors': return 'Bác sĩ da liễu'; /* Temporarily removed per request */
       case 'products': return 'Sản phẩm & Shopee Mall';
       case 'pricing': return 'Bảng giá gói quét';
       case 'history': return 'Lịch sử phân tích';
@@ -199,8 +199,8 @@ export function App() {
                   onStartScan={() => setCurrentTab('upload')}
                   onViewHistory={() => setCurrentTab('history')}
                   onViewProducts={() => setCurrentTab('products')}
-                  onViewDoctors={() => setCurrentTab('doctors')}
                   recentDiagnosis={activeDiagnosis}
+                  isLoggedIn={true}
                 />
               )}
 
@@ -236,9 +236,11 @@ export function App() {
 
               {currentTab === 'products' && <ProductsView />}
 
+              {/* Dermatologist page temporarily commented out per request
               {currentTab === 'doctors' && (
                 <DoctorsView onStartScan={() => setCurrentTab('upload')} />
               )}
+              */}
 
               {currentTab === 'pricing' && (
                 <PricingView
@@ -289,10 +291,10 @@ export function App() {
             {currentTab === 'home' && (
               <HomeView
                 onStartScan={() => setCurrentTab('upload')}
-                onViewHistory={() => setCurrentTab('history')}
+                onViewHistory={() => handleOpenAuth('login')}
                 onViewProducts={() => setCurrentTab('products')}
-                onViewDoctors={() => setCurrentTab('doctors')}
-                recentDiagnosis={activeDiagnosis}
+                recentDiagnosis={null}
+                isLoggedIn={false}
               />
             )}
 
@@ -319,18 +321,32 @@ export function App() {
               />
             )}
 
+            {/* Skin scan history section hidden for logged-out state per request */}
             {currentTab === 'history' && (
-              <HistoryView
-                onSelectDiagnosis={handleSelectHistoryDiagnosis}
-                onNewScan={() => setCurrentTab('upload')}
-              />
+              <div className="max-w-md mx-auto px-4 py-24 text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#fff0ec] text-[#f07c68] flex items-center justify-center mx-auto mb-4 font-black text-xl">
+                  🔒
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Đăng nhập để xem lịch sử quét</h3>
+                <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+                  Lịch sử phân tích hình ảnh và phác đồ điều trị được bảo mật riêng cho từng tài khoản thành viên Dưỡng Nhan.
+                </p>
+                <button
+                  onClick={() => handleOpenAuth('login')}
+                  className="btn-dn-coral px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-xs cursor-pointer"
+                >
+                  Đăng nhập tài khoản
+                </button>
+              </div>
             )}
 
             {currentTab === 'products' && <ProductsView />}
 
+            {/* Dermatologist page temporarily commented out per request
             {currentTab === 'doctors' && (
               <DoctorsView onStartScan={() => setCurrentTab('upload')} />
             )}
+            */}
 
             {currentTab === 'pricing' && (
               <PricingView

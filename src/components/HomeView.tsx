@@ -1,13 +1,14 @@
 import React from 'react';
-import { Sparkles, ArrowRight, ShieldCheck, HeartPulse, CheckCircle2, Stethoscope, ShoppingBag, ExternalLink } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, HeartPulse, CheckCircle2, ShoppingBag, ExternalLink, ClipboardList } from 'lucide-react';
 import { Diagnosis } from '../types';
 
 interface HomeViewProps {
   onStartScan: () => void;
   onViewHistory: () => void;
   onViewProducts: () => void;
-  onViewDoctors: () => void;
-  recentDiagnosis: Diagnosis | null;
+  onViewDoctors?: () => void;
+  recentDiagnosis?: Diagnosis | null;
+  isLoggedIn?: boolean;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -15,7 +16,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onViewHistory,
   onViewProducts,
   onViewDoctors,
-  recentDiagnosis
+  recentDiagnosis,
+  isLoggedIn = false
 }) => {
   return (
     <div className="bg-[#fbfaf7]">
@@ -31,7 +33,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <span className="text-[#f07c68]">Chăm sóc đúng cách.</span>
               </h1>
               <p className="dn-lead max-w-xl text-slate-600">
-                Phân tích da bằng AI, theo dõi tiến triển và kết nối trực tiếp với bác sĩ da liễu — tất cả trong một nền tảng.
+                Phân tích da bằng AI, theo dõi tiến triển và nhận phác đồ chăm sóc khoa học — tất cả trong một nền tảng.
               </p>
 
               {/* Action Buttons */}
@@ -44,11 +46,22 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <span>Phân tích da miễn phí</span>
                 </button>
                 <button
-                  onClick={onViewDoctors}
-                  className="btn-dn-outline px-6 py-3 rounded-full font-bold text-sm sm:text-base cursor-pointer hover:bg-white"
+                  onClick={onViewProducts}
+                  className="btn-dn-outline px-6 py-3 rounded-full font-bold text-sm sm:text-base cursor-pointer hover:bg-white flex items-center gap-2"
                 >
-                  Tìm bác sĩ
+                  <ShoppingBag className="w-4 h-4 text-slate-600" />
+                  <span>Sản phẩm Shopee Mall</span>
                 </button>
+                {/* Doctors button temporarily commented out per request
+                {onViewDoctors && (
+                  <button
+                    onClick={onViewDoctors}
+                    className="btn-dn-outline px-6 py-3 rounded-full font-bold text-sm sm:text-base cursor-pointer hover:bg-white"
+                  >
+                    Tìm bác sĩ
+                  </button>
+                )}
+                */}
               </div>
 
               {/* Trust checklist */}
@@ -60,7 +73,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <span className="text-emerald-600 font-bold">✓</span> Kết quả trong vài giây
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="text-emerald-600 font-bold">✓</span> Theo dõi lịch sử
+                  <span className="text-emerald-600 font-bold">✓</span> Phác đồ cá nhân hóa
                 </span>
               </div>
             </div>
@@ -91,8 +104,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* Recent Diagnosis Quick Banner (if user has active scan) */}
-      {recentDiagnosis && (
+      {/* Recent Diagnosis Quick Banner - ONLY visible in logged-in state per request */}
+      {isLoggedIn && recentDiagnosis && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
           <div className="bg-white border border-[#e7e5df] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
@@ -133,7 +146,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               Chăm sóc da dựa trên dữ liệu
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Không đoán mò. Dưỡng Nhan kết nối phân tích AI, sản phẩm chính hãng Shopee Mall và chuyên gia da liễu thành một quy trình khoa học đơn giản.
+              Không đoán mò. Dưỡng Nhan kết nối phân tích AI, đề xuất phác đồ và sản phẩm chính hãng Shopee Mall thành một quy trình khoa học đơn giản.
             </p>
           </div>
 
@@ -182,7 +195,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
 
-            {/* Card 3: Doctors */}
+            {/* Card 3: Recommendations & Scientific Routine (Replaced Doctors card) */}
+            <div className="dn-feature-card flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#edf0f3] text-[#14171f] flex items-center justify-center font-black text-xl mb-4">
+                  ＋
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Phác đồ chuẩn y khoa</h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Đề xuất quy trình điều trị 5 bước chuẩn y khoa theo mức độ mụn và loại da, giúp phục hồi hàng rào ẩm và ngăn ngừa tái phát.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-[#e7e5df]">
+                <button
+                  onClick={onStartScan}
+                  className="text-xs font-bold text-slate-900 hover:text-[#f07c68] flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Quét da nhận phác đồ</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Doctors card temporarily commented out per request
             <div className="dn-feature-card flex flex-col justify-between">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#edf0f3] text-[#14171f] flex items-center justify-center font-black text-xl mb-4">
@@ -203,6 +238,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </button>
               </div>
             </div>
+            */}
           </div>
         </div>
       </section>
@@ -246,72 +282,52 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <div>
                     <h4 className="font-bold text-sm text-slate-900">Hành động</h4>
                     <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                      Nhận phác đồ điều trị cá nhân hóa, bấm mua sản phẩm trực tiếp trên Shopee Mall hoặc đặt lịch khám bác sĩ.
+                      Nhận phác đồ điều trị cá nhân hóa và bấm mua sản phẩm dược mỹ phẩm chính hãng trực tiếp trên Shopee Mall.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Analysis Preview Card matching DuongNhan.Web */}
-            <div className="lg:col-span-6">
-              <div className="bg-white border border-[#e7e5df] rounded-3xl p-6 sm:p-8 shadow-sm">
-                <div className="flex items-center justify-between pb-3 border-b border-[#e7e5df] mb-4">
-                  <span className="text-xs font-semibold text-slate-500">Latest analysis preview</span>
-                  <b className="text-base font-black text-emerald-600">92% Health</b>
+            {/* Steps visual */}
+            <div className="lg:col-span-6 bg-white border border-[#e7e5df] rounded-3xl p-6 sm:p-8 shadow-xs">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#e7e5df]">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Demo Báo cáo Scan</span>
+                  <span className="text-[10px] font-bold bg-[#fff0ec] text-[#f07c68] px-2 py-0.5 rounded-full">
+                    AI Diagnostic
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-600">Loại da nhận diện:</span>
+                    <span className="font-bold text-slate-900">Da hỗn hợp thiên dầu</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-600">Vấn đề chính:</span>
+                    <span className="font-bold text-[#f07c68]">Mụn viêm &amp; Sợi bã nhờn (Cấp độ 2)</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-600">Hoạt chất ưu tiên:</span>
+                    <span className="font-bold text-[#238b83]">BHA 2% + Niacinamide 10%</span>
+                  </div>
+                  <div className="flex justify-between py-1.5">
+                    <span className="text-slate-600">Gợi ý dược mỹ phẩm:</span>
+                    <span className="font-bold text-slate-900">La Roche-Posay / Paula's Choice</span>
+                  </div>
                 </div>
 
-                {/* Progress bar */}
-                <div className="w-full bg-[#f4f3ef] h-2.5 rounded-full overflow-hidden mb-6">
-                  <div className="bg-emerald-500 h-full rounded-full w-[92%] transition-all"></div>
-                </div>
-
-                {/* Mini stats */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-[#f4f3ef] rounded-2xl p-3.5 text-center">
-                    <small className="text-[10px] uppercase font-bold text-slate-500 block">Acne</small>
-                    <strong className="text-sm font-extrabold text-slate-900 mt-1 block">Low</strong>
-                  </div>
-                  <div className="bg-[#f4f3ef] rounded-2xl p-3.5 text-center">
-                    <small className="text-[10px] uppercase font-bold text-slate-500 block">Hydration</small>
-                    <strong className="text-sm font-extrabold text-emerald-600 mt-1 block">Good</strong>
-                  </div>
-                  <div className="bg-[#f4f3ef] rounded-2xl p-3.5 text-center">
-                    <small className="text-[10px] uppercase font-bold text-slate-500 block">Barrier</small>
-                    <strong className="text-sm font-extrabold text-emerald-600 mt-1 block">Healthy</strong>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-[#e7e5df] flex items-center justify-between text-xs text-slate-500">
-                  <span>Mô hình lâm sàng: Dưỡng Nhan Vision v2</span>
-                  <span className="text-[#238b83] font-semibold">Độ chính xác cao</span>
+                <div className="pt-2">
+                  <button
+                    onClick={onStartScan}
+                    className="w-full btn-dn-coral py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Thử quét da ngay</span>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Dark CTA Section matching DuongNhan.Web */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="dn-dark-cta flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <span className="dn-kicker">Bắt đầu hôm nay</span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-white mt-1 mb-2 tracking-tight">
-                Đừng đoán về làn da.
-              </h2>
-              <p className="text-slate-300 text-xs sm:text-sm max-w-lg leading-relaxed">
-                Hãy bắt đầu bằng một lần phân tích da miễn phí với AI để có được lộ trình phục hồi và chu trình skincare chuẩn y khoa.
-              </p>
-            </div>
-
-            <button
-              onClick={onStartScan}
-              className="btn-dn-coral px-8 py-3.5 rounded-full font-bold text-sm shadow-md cursor-pointer whitespace-nowrap shrink-0"
-            >
-              Tạo tài khoản & Scan ngay
-            </button>
           </div>
         </div>
       </section>
